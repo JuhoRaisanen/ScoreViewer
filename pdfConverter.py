@@ -1,11 +1,12 @@
 import glob
 import ghostscript
 import locale
+import os
 from scoreView import *
 from testing import *
 
-def convertPdfs():
-    pdfs = get_all_pdfs()
+def convertPdfs(path):
+    pdfs = get_all_pdfs(path)
     for pdf in pdfs:
         name = pdf.split('.pdf')[0]
         pdf_to_jpg(
@@ -14,19 +15,19 @@ def convertPdfs():
         )
 		
 
-def analyzeJpgs():
-	jpgs = get_all_jpgs()
+def analyzeJpgs(path):
+	jpgs = get_all_jpgs(path)
 	results = []
 	for jpg in jpgs:
 		name = jpg.split('.jpg')[0]
-		fileResults = analyzeJpg(name)
+		fileResults = analyzeJpg(name, path)
 		results.append(fileResults)
 			
-	printTestResults(results)
+	#printTestResults(results)
 
 
-def analyzeJpgFile(filename):
-	analyzeJpg(filename)
+def analyzeJpgFile(filename, path):
+	analyzeJpg(filename, path)
 		
 		
 def pdf_to_jpg(pdf_input_path, jpeg_name):
@@ -42,11 +43,11 @@ def pdf_to_jpg(pdf_input_path, jpeg_name):
         ghostscript.cleanup()
 
 
-def get_all_pdfs():
-    pdf_files = glob.glob("*.pdf")
+def get_all_pdfs(path):
+    pdf_files = glob.glob(os.path.join(path, '*.pdf'))
     return pdf_files
 	
-def get_all_jpgs():
-    jpg_files = glob.glob("*.jpg")
+def get_all_jpgs(path):
+    jpg_files = glob.glob(os.path.join(path, '*.jpg'))
     return jpg_files
 
