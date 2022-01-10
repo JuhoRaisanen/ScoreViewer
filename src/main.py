@@ -11,7 +11,7 @@ def main():
 
     path = p.resolve()
     
-    #convertPdfs(path)
+    convertPdfs(path)
     analyzeJpgs(path) 
     #analyzeJpgFile('BalladeGm-001', path)
 
