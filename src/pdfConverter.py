@@ -36,11 +36,16 @@ def convertPdfs(path):
         )
 		
 
-def analyzeJpgs(path):
+def analyzeJpgs(path, maxPages):
+	i = 0
 	jpgs = get_all_jpgs(path)
 	for jpg in jpgs:
 		name = jpg.split('.jpg')[0]
 		analyzeJpg(name, path)
+		
+		i += 1
+		if i == maxPages:
+			break
 			
 
 def analyzeJpgFile(filename, path):

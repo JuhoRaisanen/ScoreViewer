@@ -10,10 +10,10 @@ def main():
     p.mkdir(exist_ok=True)
 
     path = p.resolve()
-    
+    maxPages = 100
     convertPdfs(path)
-    analyzeJpgs(path) 
-    #analyzeJpgFile('BalladeGm-001', path)
+    analyzeJpgs(path, maxPages) 
+    #analyzeJpgFile('IMSLP00716-Schumann_-_Humoreske,_Op_20-001', path)
 
     #timer
     e2 = cv.getTickCount()
