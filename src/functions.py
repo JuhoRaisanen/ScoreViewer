@@ -8,8 +8,7 @@ def startTimer():
 	
 def stopTimer(start):
 	end = cv.getTickCount()
-	time = (end - start)/ cv.getTickFrequency()
-	return time
+	return (end - start)/ cv.getTickFrequency()
 
 def xDistance(p1, p2):
 	return abs(p1 - p2)
@@ -55,9 +54,10 @@ def imageAnalysis(img, line_precision):
 	
 	gray = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
 	ret, thresh = cv.threshold(gray, 200, 255, cv.THRESH_BINARY_INV)
-	
-	lines = cv.HoughLinesP(thresh,1,1,100,minLineLength=getHEIGHT(),maxLineGap=line_precision) 
-	return lines
+
+	return cv.HoughLinesP(
+		thresh, 1, 1, 100, minLineLength=getHEIGHT(), maxLineGap=line_precision
+	)
 	
 
 def avgLineLength(line_lengths):	
@@ -84,18 +84,18 @@ def eliminateRedundantLines(points):
 	i = 0
 	while i < len(points):
 		p = points[i]
-		
+
 		j = 0
 		while j < len(points):
 			if(j == i):
 				j += 1
 				continue
-				
+
 			line = points[j]
 			if(pointDistance(line, p) < getWIDTH()/2 and length(line) <= length(p)):
 				points.pop(j)
 				if(j < i): i -= 1
-				 
+
 			else: j += 1               				  
 		i += 1
 		
@@ -106,15 +106,15 @@ def makeInitialRows(points):
 	rows = []
 	for i in range(len(points)):
 		p = points[i]
-		
+
 		if(yDistance(y_(p), y_(points[i - row_points])) < getHEIGHT()/6): #y difference
 			row_points += 1
 		else:
 			if(i > 0):
 				rows.append(points[i - row_points : i])
 			row_points = 1
-	
-	if len(rows) > 0:
+
+	if rows:
 		i = len(points)
 		rows.append(points[i - row_points : i])
 	return rows
@@ -134,19 +134,16 @@ def calculateStats(rows, widths):
 	stats = []
 	for i in range(len(rows)):
 		r = len(rows[i])
-		height_sum = 0
+		height_sum = sum(length(p) for p in rows[i])
 
-		for p in rows[i]:
-			height_sum += length(p)
-		
 		height_avg = height_sum / r
 		height_diff = abs(getHEIGHT() - height_avg) / getHEIGHT()
 		width_ratio = widths[i] / (max_w * 0.80)
 		points_ratio = r / (getPOINTS() / 7)
-		
+
 		stats.append(probability(height_diff, width_ratio, points_ratio))
 
-		#print('Row points: %2d, height_avg: %5.2f, width: %3d, p: %5.2f' % (r, height_avg, widths[i], stats[i]))
+			#print('Row points: %2d, height_avg: %5.2f, width: %3d, p: %5.2f' % (r, height_avg, widths[i], stats[i]))
 	return stats
 		
 def deleteRedundantRows(rows, stats):
@@ -158,7 +155,7 @@ def deleteRedundantRows(rows, stats):
 			rows.pop(i)
 			stats.pop(i)
 			continue
-		
+
 		this_y = y_(rows[i][0])
 		if yDistance(this_y, prev_y) < getHEIGHT():		
 			if stats[i] > stats[i-1]:
@@ -169,7 +166,7 @@ def deleteRedundantRows(rows, stats):
 				rows.pop(i)
 				stats.pop(i)
 			continue
-			
+
 		i += 1
 		prev_y = this_y
 		
@@ -179,12 +176,12 @@ def drawToImage(points, rows, img, path, fileName):
 	for p in points:
 		cv.circle(img,p[:2], 20, (0, 0, 255), -1)
 		cv.line(img, (x_(p),y_(p)), (x_(p),y_(p)-length(p)), (0,0,255), 4) 
-		
+
 	#Row points with green
 	for r in rows:
 		for p in r:
 			cv.circle(img,p[:2], 20, (0, 255, 0), -1)
-	
+
 	#Write to image
-	cv.imwrite(os.path.join(path, fileName + '-mask' + '.png') ,img)
+	cv.imwrite(os.path.join(path, f'{fileName}-mask.png'), img)
 	
