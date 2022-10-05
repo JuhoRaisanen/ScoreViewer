@@ -42,7 +42,7 @@ def analyzeJpgs(path, maxPages):
 	for jpg in jpgs:
 		name = jpg.split('.jpg')[0]
 		analyzeJpg(name, path)
-		
+
 		i += 1
 		if i == maxPages:
 			break
@@ -66,10 +66,8 @@ def pdf_to_jpg(pdf_input_path, jpeg_name):
 
 
 def get_all_pdfs(path):
-    pdf_files = glob.glob(os.path.join(path, '*.pdf'))
-    return pdf_files
+    return glob.glob(os.path.join(path, '*.pdf'))
 	
 def get_all_jpgs(path):
-    jpg_files = glob.glob(os.path.join(path, '*.jpg'))
-    return jpg_files
+    return glob.glob(os.path.join(path, '*.jpg'))
 
